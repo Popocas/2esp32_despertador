@@ -1,68 +1,23 @@
-#include <Wire.h>
-#include <RTClib.h>
-#include <LiquidCrystal_I2C.h>
+sPegar ip esp32
 
-RTC_DS1307 rtc;
-LiquidCrystal_I2C lcd(0x27, 16, 2); // Endereço I2C do LCD
-bool alarmeAtivo = false;
-int horaDespertador = 16;    // Defina a hora do despertador
-int minutoDespertador = 40;  // Defina os minutos do despertador
-const int pinAlimentacao = 23; // Pino usado no Motor vibratório
+#include <WiFi.h>
 
-void setup()
-{
-  pinMode (pinAlimentacao, OUTPUT);
-  Wire.begin();
-  rtc.begin();
+const char* ssid     = "Luciano";         // Nome da sua rede Wi-Fi
+const char* password = "yuji2106";   // Senha da sua rede Wi-Fi
 
-  if (!rtc.isrunning())
-  {
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+void setup() {
+  Serial.begin(115200);
+
+  // Conectando à rede Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Conectando ao WiFi...");
   }
 
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();
+  // Exibindo o endereço IP
+  Serial.print("Conectado! Endereço IP: ");
+  Serial.println(WiFi.localIP());
 }
 
-void loop()
-{
-  DateTime now = rtc.now();
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Hora: ");
-  lcd.print(now.hour(), DEC);
-  lcd.print(":");
-  lcd.print(now.minute(), DEC);
-  lcd.print(":");
-  lcd.print(now.second(), DEC);
-
-  lcd.setCursor(0, 1);
-  lcd.print("Data: ");
-  lcd.print(now.day(), DEC);
-  lcd.print("/");
-  lcd.print(now.month(), DEC);
-  lcd.print("/");
-  lcd.print(now.year(), DEC);
-
-  
-
-  // Verificar se é hora de acionar o despertador
-  if (!alarmeAtivo && now.hour() == horaDespertador && now.minute() == minutoDespertador)
-  {
-    // Ativar o despertador
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("ALARME!");
-    digitalWrite(pinAlimentacao, HIGH);
-
-    
-    delay(10000);
-    digitalWrite(pinAlimentacao, LOW);
-    alarmeAtivo = true;
-    // Você pode adicionar aqui código para tocar um som ou fazer outra ação quando o despertador é acionado.
-  }
-
-  delay(1000);
-}
+void loop() {}
