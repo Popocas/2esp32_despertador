@@ -1,0 +1,21 @@
+#include <WiFi.h>
+
+const char* ssid     = "Luciano";         // Nome da sua rede Wi-Fi
+const char* password = "yuji2106";   // Senha da sua rede Wi-Fi
+
+void setup() {
+  Serial.begin(115200);
+
+  // Conectando à rede Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Conectando ao WiFi...");
+  }
+
+  // Exibindo o endereço IP
+  Serial.print("Conectado! Endereço IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {}
